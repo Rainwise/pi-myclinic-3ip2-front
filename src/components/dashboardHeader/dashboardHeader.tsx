@@ -36,7 +36,7 @@ const UserInfoBlock = ({ user }: { user: User | null }) => {
         <Text fw={500} size="lg">
           {user?.firstName || "John"} {user?.lastName || "Doe"}
         </Text>
-        <Text c={"dimmed"} size="sm">
+        <Text c={"red"} size="sm">
           {"" + (user?.role || "Patient")}
         </Text>
       </Stack>
