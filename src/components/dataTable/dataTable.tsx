@@ -12,14 +12,12 @@ export const DataTable = <TData extends Record<string, unknown>>({
   return (
     <Table.ScrollContainer minWidth={500}>
       <Table
-        layout="fixed"
         fz="md"
         highlightOnHover
         horizontalSpacing="md"
         striped="even"
         verticalSpacing="xs"
         withColumnBorders
-        stickyHeader
         w="100%"
         bg="var(--mantine-color-bg-1)"
         c="var(--mantine-color-text-0)"
