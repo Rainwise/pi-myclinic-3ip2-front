@@ -13,7 +13,19 @@ export function useApiClient(): AxiosInstance {
       },
     });
 
-    // TODO : Ubaciti interceptore za auth token!
+    instance.interceptors.request.use(
+      (config) => {
+        const storedUser = localStorage.getItem("myClinicUser");
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (user?.token) {
+            config.headers.Authorization = `Bearer ${user.token}`;
+          }
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
     return instance;
   }, []);
