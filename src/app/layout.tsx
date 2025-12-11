@@ -7,6 +7,9 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import { theme } from "@/styles/mantineTheme";
 
+// Hook Imports
+import { AuthProvider } from "@/hooks/context/useAuthContext";
+
 const ubuntuSans = Ubuntu_Sans({
   subsets: ["latin"],
   weight: "400",
@@ -26,8 +29,10 @@ export default function RootLayout({
     <html lang="en" {...mantineHtmlProps}>
       <body className={ubuntuSans.className}>
         <MantineProvider forceColorScheme="light" theme={theme}>
-          <Notifications />
-          {children}
+          <AuthProvider>
+            <Notifications />
+            {children}
+          </AuthProvider>
         </MantineProvider>
       </body>
     </html>
