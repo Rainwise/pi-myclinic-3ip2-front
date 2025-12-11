@@ -1,8 +1,10 @@
 "use client";
-import { AppShell, ScrollArea, Image, Stack, NavLink } from "@mantine/core";
+import { AppShell, ScrollArea, Image, Stack, NavLink, LoadingOverlay } from "@mantine/core";
 
 // Hook Imports
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/hooks/context/useAuthContext";
 import { useMediaQuery, useLocalStorage, useDisclosure } from "@mantine/hooks";
 
 // Util imports
@@ -28,6 +30,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { user, checkingData, logout, loading } = useAuthContext();
   const [opened] = useDisclosure(false);
   const breakpoints = GetBreakpoints();
   const isSmallScreen = useMediaQuery(`(max-width: ${breakpoints.lg}px`);
@@ -37,6 +40,22 @@ export default function DashboardLayout({
     key: "lobby-sidebar-opened",
     defaultValue: true,
   });
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/auth");
+    }
+  }, [user, checkingData, router]);
+
+  if (!user) {
+    return (
+      <LoadingOverlay
+        visible
+        zIndex={1000}
+        loaderProps={{ color: "var(--mantine-color-primary-1)", type: "oval" }}
+      />
+    );
+  }
 
   const handleSidebarToggle = () => {
     setSidebarOpened((prev) => !prev);

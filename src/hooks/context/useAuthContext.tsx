@@ -58,12 +58,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (username: string, password: string) => {
+  const register = async (username: string, password: string ,email: string) => {
     setLoading(true);
     try {
       const { data } = await api.post<User>("auth/register/", {
         username,
         password,
+        email
       });
       setUser(data);
       localStorage.setItem("myClinicUser", JSON.stringify(data));

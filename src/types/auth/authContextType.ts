@@ -5,6 +5,6 @@ export interface IAuthContext {
   loading: boolean;
   checkingData: boolean;
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string, email: string) => Promise<void>;
   logout: () => void;
 }
