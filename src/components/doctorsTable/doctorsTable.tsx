@@ -2,7 +2,11 @@
 import { Stack, Flex, Group, Button } from "@mantine/core";
 
 // Type Imports
-import { Doctor, DoctorModalValues } from "@/types/doctor/doctor";
+import {
+  Doctor,
+  DoctorModalValues,
+  DoctorTableData,
+} from "@/types/doctor/doctor";
 
 // Hook Imports
 import { useDisclosure } from "@mantine/hooks";
@@ -11,121 +15,79 @@ import { useState } from "react";
 // Component Imports
 import { DataTable } from "@/components/dataTable/dataTable";
 import DoctorsCreateOrUpdateModal from "@/components/doctorCreateOrUpdateModal/doctorCreateOrUpdateModal";
+import DeleteModal from "@/components/deleteModal/DeleteModal";
 
 // Table Related Imports
 import { createDoctorsTableColumns } from "@/components/doctorsTable/doctorsTableColumns";
 
-// Icon Imports
-import { IconCirclePlus, IconStethoscope } from "@tabler/icons-react";
-
-export const DoctorsTable = () => {
-  const [
-    doctorModalOpened,
-    { open: openDoctorModal, close: closeDoctorModal },
-  ] = useDisclosure(false);
+export const DoctorsTable = ({
+  doctorsData,
+  isLoading,
+  updateDoctor,
+  deleteDoctor,
+}: DoctorTableData) => {
   const [selectedDoctor, setSelectedDoctor] =
     useState<DoctorModalValues | null>(null);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
+  const [
+    updateModalOpened,
+    { open: openUpdateModal, close: closeUpdateModal },
+  ] = useDisclosure(false);
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
 
-  const handleOpenDoctorModal = (doctor: DoctorModalValues) => {
-    setSelectedDoctor(doctor);
-    openDoctorModal();
+  // TODO - API Implementacija
+  const specializationMap: { [key: string]: number } = {
+    "Opca medicina": 1,
+    Psihijatrija: 2,
+    "Plastisni kirurg": 3,
   };
 
-  const handleCloseDoctorModal = () => {
-    closeDoctorModal();
+  // Transform Doctor to DoctorModalValues
+  const transformDoctorToModalValues = (doctor: Doctor): DoctorModalValues => {
+    return {
+      id: doctor.idDoctor,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
+      email: doctor.email,
+      phoneNumber: doctor.phoneNumber,
+      licenseNumber: doctor.licenseNumber,
+      specializationId:
+        specializationMap[doctor.specialization] ??
+        specializationMap["Opca medicina"] ??
+        1,
+      isActive: doctor.isActive,
+    };
   };
 
   const doctorsTableColumns = createDoctorsTableColumns({
-    editDoctor: handleOpenDoctorModal,
-    deleteDoctor: (doctorId: number) => {
-      // Delete doctor logic here
+    editDoctor: (doctor: Doctor) => {
+      const modalValues = transformDoctorToModalValues(doctor);
+      setSelectedDoctor(modalValues);
+      openUpdateModal();
+    },
+    deleteDoctor: (doctor: Doctor) => {
+      const modalValues = transformDoctorToModalValues(doctor);
+      setSelectedDoctor(modalValues);
+      setSelectedDoctorId(doctor.idDoctor);
+      openDeleteModal();
     },
   });
 
-  const doctorsMock = [
-    {
-      id: 1,
-      firstName: "Emily",
-      lastName: "Stone",
-      email: "emily.stone@example.com",
-      phoneNumber: "+1-555-101-2020",
-      licenseNumber: "LIC-784512",
-      specialisation: "Cardiology",
-      isActive: true,
-    },
-    {
-      id: 2,
-      firstName: "Michael",
-      lastName: "Reyes",
-      email: "michael.reyes@example.com",
-      phoneNumber: "+1-555-303-4040",
-      licenseNumber: "LIC-993845",
-      specialisation: "Dermatology",
-      isActive: true,
-    },
-    {
-      id: 3,
-      firstName: "Sophia",
-      lastName: "Keller",
-      email: "sophia.keller@example.com",
-      phoneNumber: "+1-555-505-6060",
-      licenseNumber: "LIC-112457",
-      specialisation: "Neurology",
-      isActive: false,
-    },
-    {
-      id: 4,
-      firstName: "Daniel",
-      lastName: "Morris",
-      email: "daniel.morris@example.com",
-      phoneNumber: "+1-555-707-8080",
-      licenseNumber: "LIC-667890",
-      specialisation: "Pediatrics",
-      isActive: true,
-    },
-    {
-      id: 5,
-      firstName: "Hannah",
-      lastName: "Kim",
-      email: "hannah.kim@example.com",
-      phoneNumber: "+1-555-909-0101",
-      licenseNumber: "LIC-445231",
-      specialisation: "Orthopedics",
-      isActive: false,
-    },
-  ];
+  const handleCloseUpdateModal = () => {
+    closeUpdateModal();
+    setSelectedDoctor(null);
+  };
+
+  const handleUpdateDoctor = async (values: DoctorModalValues) => {
+    await updateDoctor?.(values);
+    setSelectedDoctor(null);
+  };
 
   return (
     <Stack gap={"lg"}>
-      <Flex
-        justify={"space-between"}
-        align={"center"}
-        bg={"var(--mantine-color-bg-1)"}
-        p={"md"}
-        bdrs={"xl"}
-        mih={"60px"}
-        wrap={"wrap"}
-        gap={"lg"}
-      >
-        <Group gap={"md"}>
-          <Button
-            c="var(--mantine-color-text-4)"
-            fz={"sm"}
-            fw={300}
-            radius="xl"
-            size="md"
-            color={"var(--mantine-color-green-2)"}
-            leftSection={<IconCirclePlus size={18} />}
-            rightSection={<IconStethoscope size={18} />}
-            onClick={() => openDoctorModal()}
-            loading={false}
-            disabled={false}
-          >
-            {"Create new doctor"}
-          </Button>
-        </Group>
-      </Flex>
-
       <Stack
         bg={"var(--mantine-color-bg-1)"}
         p={"md"}
@@ -134,19 +96,30 @@ export const DoctorsTable = () => {
         gap={0}
       >
         <DataTable
-          tableData={doctorsMock}
+          tableData={doctorsData}
           columnDefinitions={doctorsTableColumns}
-          isLoading={false}
+          isLoading={isLoading}
         />
       </Stack>
       <DoctorsCreateOrUpdateModal
         modalProps={{
-          opened: doctorModalOpened,
-          onClose: handleCloseDoctorModal,
+          opened: updateModalOpened,
+          onClose: handleCloseUpdateModal,
         }}
         initialValues={selectedDoctor || undefined}
-        onSubmit={() => Promise.resolve()}
-        loading={false}
+        onSubmit={handleUpdateDoctor}
+        loading={isLoading}
+      />
+      <DeleteModal
+        modalTitle="Delete Doctor"
+        modalDescription="Are you sure you want to delete this doctor?"
+        onSubmit={deleteDoctor}
+        loading={isLoading}
+        modalProps={{
+          opened: deleteModalOpened,
+          onClose: closeDeleteModal,
+        }}
+        objectId={selectedDoctorId ?? undefined}
       />
     </Stack>
   );

@@ -2,15 +2,15 @@
 import { Button, Group } from "@mantine/core";
 
 // Type Imports
-import { DoctorModalValues } from "@/types/doctor/doctor";
+import { Doctor } from "@/types/doctor/doctor";
 import { ColumnDefinition } from "@/types/dataTable/dataTable";
 
 import { IconX, IconEdit } from "@tabler/icons-react";
 
 export const createDoctorsTableColumns = (actions: {
-  editDoctor: (doctor: DoctorModalValues) => void;
-  deleteDoctor: (doctorId: number) => void;
-}): ColumnDefinition<DoctorModalValues>[] => [
+  editDoctor: (doctor: Doctor) => void;
+  deleteDoctor: (doctor: Doctor) => void;
+}): ColumnDefinition<Doctor>[] => [
   {
     key: "firstName",
     label: "First Name",
@@ -53,11 +53,11 @@ export const createDoctorsTableColumns = (actions: {
     },
   },
   {
-    key: "specialisation",
+    key: "specialisationId",
     label: "Specialisation",
     align: "left",
     render: (_, row) => {
-      return row.specialisation;
+      return row.specialization;
     },
   },
   {
@@ -73,7 +73,7 @@ export const createDoctorsTableColumns = (actions: {
             miw={"100px"}
             leftSection={<IconEdit size={20} />}
             radius={"lg"}
-            onClick={() => actions.editDoctor(row as DoctorModalValues)}
+            onClick={() => actions.editDoctor(row)}
           >
             Edit
           </Button>
@@ -83,7 +83,7 @@ export const createDoctorsTableColumns = (actions: {
             miw={"100px"}
             leftSection={<IconX size={20} />}
             radius={"lg"}
-            onClick={() => actions.deleteDoctor(row.id as number)}
+            onClick={() => actions.deleteDoctor(row)}
           >
             Delete
           </Button>

@@ -1,5 +1,12 @@
 "use client";
-import { AppShell, ScrollArea, Image, Stack, NavLink, LoadingOverlay } from "@mantine/core";
+import {
+  AppShell,
+  ScrollArea,
+  Image,
+  Stack,
+  NavLink,
+  LoadingOverlay,
+} from "@mantine/core";
 
 // Hook Imports
 import { useEffect } from "react";

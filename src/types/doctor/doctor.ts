@@ -1,12 +1,19 @@
 export type Doctor = {
-  id: number;
+  idDoctor: number;
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   licenseNumber: string;
-  specialisation: string;
+  specialization: string;
   isActive: boolean;
+};
+
+export type DoctorTableData = {
+  doctorsData: Doctor[];
+  isLoading: boolean;
+  updateDoctor?: (values: DoctorModalValues) => Promise<void>;
+  deleteDoctor?: (id: number) => Promise<void>;
 };
 
 export interface CustomModalProps {
@@ -26,6 +33,6 @@ export interface DoctorModalValues {
   email: string;
   phoneNumber: string;
   licenseNumber: string;
-  specialisation: string;
+  specializationId: number;
   isActive: boolean;
 }

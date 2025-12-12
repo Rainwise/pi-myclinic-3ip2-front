@@ -58,13 +58,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (username: string, password: string ,email: string) => {
+  const register = async (
+    username: string,
+    password: string,
+    email: string
+  ) => {
     setLoading(true);
     try {
       const { data } = await api.post<User>("auth/register/", {
         username,
         password,
-        email
+        email,
       });
       setUser(data);
       localStorage.setItem("myClinicUser", JSON.stringify(data));
@@ -74,7 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         message: `Your account has been created.`,
         color: "green",
       });
-      router.push("/Auth");
+      router.push("/auth");
     } catch (error: unknown) {
       notifications.show({
         title: "Registration failed",
