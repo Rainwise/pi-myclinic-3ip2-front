@@ -15,6 +15,7 @@ import {
 
 // Hooks Imports
 import { useViewportSize, useDisclosure } from "@mantine/hooks";
+import { useAuthContext } from "@/hooks/context/useAuthContext";
 
 // Utils
 import { GetBreakpoints } from "@/utils/getBreakpoints";
@@ -34,10 +35,10 @@ const UserInfoBlock = ({ user }: { user: User | null }) => {
       <Avatar size={"md"} src="" alt="it's me" />
       <Stack gap={0}>
         <Text fw={500} size="lg">
-          {user?.firstName || "John"} {user?.lastName || "Doe"}
+          {user?.username || ""}
         </Text>
-        <Text c={"red"} size="sm">
-          {"" + (user?.role || "Patient")}
+        <Text c={"dimmed"} size="sm">
+          {user?.role || ""}
         </Text>
       </Stack>
     </Group>
@@ -45,6 +46,7 @@ const UserInfoBlock = ({ user }: { user: User | null }) => {
 };
 
 export const DashboardHeader = () => {
+  const { user, logout } = useAuthContext();
   const { width: screenWidth } = useViewportSize();
   const breakpoints = GetBreakpoints();
   const [
@@ -71,7 +73,7 @@ export const DashboardHeader = () => {
         {screenWidth < breakpoints.md && (
           <Flex align={"center"} gap={"md"}>
             <Image
-              src={"/assets/redCross.png"}
+              src={"/assets/authFormLogo.png"}
               alt="eventImage"
               fit="contain"
               h={"50px"}
@@ -81,7 +83,7 @@ export const DashboardHeader = () => {
         )}
         {screenWidth >= breakpoints.md && (
           <Group ml={"auto"}>
-            <UserInfoBlock user={null} />
+            <UserInfoBlock user={user} />
           </Group>
         )}
         {screenWidth < breakpoints.md && (
@@ -100,7 +102,7 @@ export const DashboardHeader = () => {
         size={screenWidth >= breakpoints.md ? "40%" : "100%"}
         opened={mobileSidebarOpened}
         onClose={closeMobileSidebar}
-        title={<UserInfoBlock user={null} />}
+        title={<UserInfoBlock user={user} />}
         position="right"
       >
         <Divider mt={"lg"} mb={"lg"} />
@@ -114,7 +116,7 @@ export const DashboardHeader = () => {
           bdrs="md"
           bg="var(--mantine-color-secondary-1)"
           style={{ color: "var(--mantine-color-text-4)" }}
-          onClick={() => {}}
+          onClick={logout}
         />
       </Drawer>
     </Box>

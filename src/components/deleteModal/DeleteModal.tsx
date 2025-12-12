@@ -19,12 +19,6 @@ export default function DeleteModal({
   const handleSubmit = () => {
     if (objectId && onSubmit) {
       onSubmit(objectId);
-      notifications.show({
-        title: "Success",
-        withBorder: true,
-        message: "Deleted successfully",
-        color: "green",
-      });
       modalProps.onClose();
     } else {
       notifications.show({

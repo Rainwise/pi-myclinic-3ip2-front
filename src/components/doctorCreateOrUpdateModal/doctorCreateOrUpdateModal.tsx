@@ -27,7 +27,7 @@ export default function DoctorsCreateOrUpdateModal({
       email: "",
       phoneNumber: "",
       licenseNumber: "",
-      specialisation: "",
+      specializationId: initialValues?.specializationId ?? 1,
       isActive: true,
       ...initialValues,
     },
@@ -41,33 +41,48 @@ export default function DoctorsCreateOrUpdateModal({
       email: (value) =>
         /^\S+@\S+$/.test(value) ? null : "Invalid email address",
       phoneNumber: (value) =>
-        value.trim().length < 10
-          ? "Phone number must be at least 10 digits"
+        value.trim().length < 5
+          ? "Phone number must be at least 5 digits"
           : null,
       licenseNumber: (value) =>
         value.trim().length === 0 ? "License number is required" : null,
-
-      specialisation: (value) =>
-        value.trim().length === 0 ? "Specialisation is required" : null,
     },
   });
 
   const handleSubmit = async (values: DoctorModalValues) => {
     try {
-      await onSubmit?.(values);
+      if (!onSubmit) {
+        console.error("No onSubmit handler provided");
+        return;
+      }
+      await onSubmit(values);
       modalProps.onClose();
       form.reset();
     } catch (error) {
-      console.error("Failed to create doctor:", error);
+      console.error("Failed to create/update doctor:", error);
     }
   };
 
   useEffect(() => {
-    if (initialValues) {
-      form.setValues(initialValues);
+    if (modalProps.opened) {
+      if (initialValues) {
+        form.setValues({
+          ...initialValues,
+          id: initialValues.id,
+        });
+      } else {
+        form.reset();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues]);
+  }, [modalProps.opened]);
+
+  // TODO - Implmentirati api
+  const specializations = [
+    { id: 1, fullname: "Opca medicina" },
+    { id: 2, fullname: "Psihijatrija" },
+    { id: 3, fullname: "Plastisni kirurg" },
+  ];
 
   return (
     <Modal
@@ -94,6 +109,29 @@ export default function DoctorsCreateOrUpdateModal({
             label="Last Name"
             placeholder="Last name"
             {...form.getInputProps("lastName")}
+          />
+
+          <Select
+            label="Specialization"
+            placeholder="Select specialization"
+            data={
+              specializations?.map((specialization) => ({
+                value:
+                  specialization.id != null ? specialization.id.toString() : "",
+                label: specialization.fullname,
+              })) || []
+            }
+            value={
+              form.values.specializationId
+                ? form.values.specializationId.toString()
+                : ""
+            }
+            onChange={(value) =>
+              form.setFieldValue(
+                "specializationId",
+                value ? parseInt(value) : 0
+              )
+            }
           />
 
           <TextInput
