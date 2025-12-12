@@ -9,6 +9,7 @@ import { theme } from "@/styles/mantineTheme";
 
 // Hook Imports
 import { AuthProvider } from "@/hooks/context/useAuthContext";
+import { BreadcrumbProvider } from "@/hooks/context/useBreadcrumbsContext";
 
 const ubuntuSans = Ubuntu_Sans({
   subsets: ["latin"],
@@ -29,9 +30,9 @@ export default function RootLayout({
     <html lang="en" {...mantineHtmlProps}>
       <body className={ubuntuSans.className}>
         <MantineProvider forceColorScheme="light" theme={theme}>
+          <Notifications />
           <AuthProvider>
-            <Notifications />
-            {children}
+            <BreadcrumbProvider>{children}</BreadcrumbProvider>
           </AuthProvider>
         </MantineProvider>
       </body>

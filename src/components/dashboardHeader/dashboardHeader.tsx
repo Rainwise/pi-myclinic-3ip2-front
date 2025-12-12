@@ -22,6 +22,7 @@ import { GetBreakpoints } from "@/utils/getBreakpoints";
 
 // Component Imports
 import { DashboardSidebar } from "@/components/dashboardSidebar/dashboardSidebar";
+import { DashboardBreadcrumbsComponent } from "@/components/dashboardBreadcrumbs/dashboardBreadcrumbsComponent";
 
 // Icon Imports
 import { IconMenu2, IconLogout2 } from "@tabler/icons-react";
@@ -70,10 +71,11 @@ export const DashboardHeader = () => {
         wrap="nowrap"
         gap={"md"}
       >
+        {screenWidth >= breakpoints.md && <DashboardBreadcrumbsComponent />}
         {screenWidth < breakpoints.md && (
           <Flex align={"center"} gap={"md"}>
             <Image
-              src={"/assets/authFormLogo.png"}
+              src={"/assets/redCross.png"}
               alt="eventImage"
               fit="contain"
               h={"50px"}

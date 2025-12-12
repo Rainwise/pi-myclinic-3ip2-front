@@ -1,10 +1,11 @@
 "use client";
-import { Stack, Flex, Box, Button } from "@mantine/core";
+import { Stack, Box, Button } from "@mantine/core";
 import { DoctorsTable } from "@/components/doctorsTable/doctorsTable";
 
 // Hook Imports
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useShallowEffect } from "@mantine/hooks";
 import { useDoctor } from "@/hooks/doctors/useDoctors";
+import { useBreadcrumbs } from "@/hooks/context/useBreadcrumbsContext";
 
 // Type Imports
 import { DoctorModalValues } from "@/types/doctor/doctor";
@@ -17,6 +18,7 @@ import DoctorCreateOrUpdateModal from "@/components/doctorCreateOrUpdateModal/do
 
 export default function DoctorsPage() {
   const [opened, { open, close }] = useDisclosure(false);
+  const { setBreadcrumbs } = useBreadcrumbs();
   const {
     doctors,
     createDoctor,
@@ -29,6 +31,13 @@ export default function DoctorsPage() {
       refetchDoctors();
     },
   });
+
+  useShallowEffect(() => {
+    setBreadcrumbs([
+      { label: "Dashboard", href: "/dashboard" },
+      { label: "Doctors", href: "/dashboard/doctors" },
+    ]);
+  }, []);
 
   const handleUpdateDoctor = async (payload: DoctorModalValues) => {
     if (payload.id) {

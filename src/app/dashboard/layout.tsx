@@ -150,7 +150,11 @@ export default function DashboardLayout({
                 (e.currentTarget as HTMLAnchorElement).style.backgroundColor =
                   sidebarStyles.secondaryAction;
               }}
-              onClick={() => {}}
+              onClick={() => {
+                localStorage.removeItem("myClinicUser");
+                logout();
+                router.push("/auth");
+              }}
             />
           </Stack>
         </AppShell.Section>
